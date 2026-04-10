@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORGE — Framework for Orchestrated, ROI-Guided Engineering</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3345;
+    --text: #e4e6ef;
+    --text-muted: #8b90a5;
+    --accent: #6366f1;
+    --accent-light: #818cf8;
+    --t1: #22d3ee;
+    --t1-bg: rgba(34,211,238,0.08);
+    --t2: #f59e0b;
+    --t2-bg: rgba(245,158,11,0.08);
+    --t3: #a78bfa;
+    --t3-bg: rgba(167,139,250,0.08);
+    --green: #34d399;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --orange: #fb923c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+  /* HERO */
+  .hero {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 6rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--accent-light);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #e4e6ef 0%, #818cf8 50%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent-light);
+  }
+  .hero-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .section-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 650px;
+    margin-bottom: 3rem;
+  }
+
+  /* PRINCIPLE CARDS */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .principle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: border-color 0.2s;
+  }
+  .principle:hover { border-color: var(--accent); }
+  .principle-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .principle h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .principle p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  /* PIPELINE */
+  .pipeline-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding: 2rem 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pipeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+    position: relative;
+  }
+  .pipeline-dot {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+    z-index: 2;
+  }
+  .pipeline-step-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 100px;
+  }
+  .pipeline-step-tier {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .pipeline-arrow {
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--border);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .tier-t1 { background: var(--t1); }
+  .tier-t2 { background: var(--t2); color: #000; }
+  .tier-t3 { background: var(--t3); }
+  .tier-badge-t1 { background: var(--t1-bg); color: var(--t1); border: 1px solid rgba(34,211,238,0.2); }
+  .tier-badge-t2 { background: var(--t2-bg); color: var(--t2); border: 1px solid rgba(245,158,11,0.2); }
+  .tier-badge-t3 { background: var(--t3-bg); color: var(--t3); border: 1px solid rgba(167,139,250,0.2); }
+  .tier-human { background: var(--green); }
+
+  /* THREE TIERS */
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 900px) { .tiers-grid { grid-template-columns: 1fr; } }
+  .tier-card {
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid var(--border);
+  }
+  .tier-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .tier-card .tier-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+  .tier-card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .tier-card li {
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tier-card li:first-child { border-top: none; }
+  .tier-cost {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+  }
+  .tier-models {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* DUAL LAYER */
+  .dual-layer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  @media (max-width: 800px) { .dual-layer { grid-template-columns: 1fr; } }
+  .layer-card {
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid var(--border);
+  }
+  .layer-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .layer-card .layer-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+  .layer-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .layer-field {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .layer-field code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    background: rgba(99,102,241,0.1);
+    color: var(--accent-light);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .layer-field span { color: var(--text-muted); }
+
+  /* COMPONENTS */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
+  .comp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .comp-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .comp-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .comp-letter {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .comp-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .comp-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 1rem;
+  }
+  .comp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .comp-tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .comp-tag.build { border-color: rgba(99,102,241,0.3); color: var(--accent-light); background: rgba(99,102,241,0.08); }
+  .comp-tag.extend { border-color: rgba(52,211,153,0.3); color: var(--green); background: rgba(52,211,153,0.08); }
+  .comp-tag.integrate { border-color: rgba(251,146,60,0.3); color: var(--orange); background: rgba(251,146,60,0.08); }
+  .comp-phase {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    background: rgba(99,102,241,0.1);
+    color: var(--accent-light);
+    margin-left: auto;
+  }
+
+  /* PHASES */
+  .phases {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    padding-left: 2.5rem;
+  }
+  .phases::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .phase {
+    position: relative;
+  }
+  .phase-dot {
+    position: absolute;
+    left: -2.5rem;
+    top: 0.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-light);
+    z-index: 2;
+  }
+  .phase h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .phase-time {
+    font-size: 0.8rem;
+    color: var(--accent-light);
+    margin-bottom: 0.5rem;
+  }
+  .phase p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .phase-milestone {
+    font-size: 0.85rem;
+    color: var(--green);
+    font-style: italic;
+  }
+  .phase-components {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+  .phase-comp-tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* AIDEN REUSE */
+  .reuse-bar {
+    height: 32px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 1.5rem;
+  }
+  .reuse-bar .reused {
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .reuse-bar .new {
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .reuse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.75rem;
+  }
+  .reuse-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+  .reuse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .reuse-dot.core { background: var(--green); }
+  .reuse-dot.adapt { background: var(--t2); }
+  .reuse-dot.ref { background: var(--text-muted); }
+
+  /* RISKS */
+  .risks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+  }
+  .risk-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .risk-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .risk-num {
+    font-size: 0.7rem;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .risk-num.arch { background: rgba(248,113,113,0.15); color: var(--red); }
+  .risk-num.ops { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .risk-num.biz { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .risk-num.tech { background: rgba(167,139,250,0.15); color: var(--t3); }
+  .risk-header h4 { font-size: 0.9rem; font-weight: 600; }
+  .risk-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* FOOTER */
+  .footer {
+    padding: 3rem 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  /* HANDOFF EXAMPLE */
+  .handoff {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.5rem;
+    max-width: 700px;
+  }
+  .handoff-step {
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    padding-bottom: 1.5rem;
+  }
+  .handoff-step:last-child { padding-bottom: 0; }
+  .handoff-step::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .handoff-step:last-child::before { display: none; }
+  .handoff-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .handoff-content h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .handoff-content p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+  .handoff-writes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+  }
+  .handoff-write {
+    font-size: 0.7rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(99,102,241,0.1);
+    color: var(--accent-light);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-badge">Architecture Overview &middot; April 2026</span>
+  <h1>FORGE</h1>
+  <p>Framework for Orchestrated, ROI-Guided Engineering. A full-circle AI framework that takes a product from user feedback to prioritized backlog to implementation to deployment to user notification &mdash; orchestrated by specialized AI agents, governed by economics.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-value">11</div><div class="hero-stat-label">Components</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">3</div><div class="hero-stat-label">Agent Tiers</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">12</div><div class="hero-stat-label">Guidance Templates</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">~40 wks</div><div class="hero-stat-label">Saved via AIDEN</div></div>
+  </div>
+</div>
+
+<!-- CORE PRINCIPLES -->
+<section>
+  <div class="container">
+    <span class="section-label">Foundation</span>
+    <h2 class="section-title">Core Principles</h2>
+    <p class="section-subtitle">Five architectural decisions that shape everything in FORGE.</p>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-icon" style="background:rgba(99,102,241,0.12); color:var(--accent-light);">&#9997;</div>
+        <h3>Tickets Are Prompts</h3>
+        <p>Every ticket is an agent-optimized context bundle. The full payload contains pre-assembled evidence, explicit instructions, success criteria, and constraints. Humans see only a thin summary on the board.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-icon" style="background:rgba(34,211,238,0.12); color:var(--t1);">&#9881;</div>
+        <h3>Three Agent Tiers</h3>
+        <p>Gatherers (cheap, fast) collect and structure data. Thinkers (powerful) analyze and decide. Communicators (empathetic) translate outcomes into human language. Each uses the right model for the job.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-icon" style="background:rgba(52,211,153,0.12); color:var(--green);">&#8644;</div>
+        <h3>Module Independence</h3>
+        <p>All modules communicate through ticket contracts on the Board API. Any module can be swapped for a third-party tool. Modules never call each other directly. Bring your own IDE, support tool, or CI/CD.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-icon" style="background:rgba(251,146,60,0.12); color:var(--orange);">&#9878;</div>
+        <h3>Built on AIDEN</h3>
+        <p>FORGE inherits LLM routing, RAG, queues, billing, auth, multi-tenancy, context engineering, and DAG execution from the proven AIDEN platform. ~35-50 weeks of engineering saved.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-icon" style="background:rgba(248,113,113,0.12); color:var(--red);">&#9733;</div>
+        <h3>ROI Drives Everything</h3>
+        <p>Every feature, bug fix, and task is scored by ROI. Agents default to minimal fixes and maximum pragmatism. They are economists, not perfectionists. The board is a prioritization tool.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE FLOW -->
+<section>
+  <div class="container">
+    <span class="section-label">The Full Loop</span>
+    <h2 class="section-title">How a Bug Flows Through FORGE</h2>
+    <p class="section-subtitle">From user report to resolution notification &mdash; each step handled by the right tier of agent, with the board as the central protocol layer.</p>
+    <div class="pipeline-flow">
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-t1">1</div>
+        <div class="pipeline-step-label">Classify</div>
+        <span class="pipeline-step-tier tier-badge-t1">T1 Gatherer</span>
+      </div>
+      <div class="pipeline-arrow">&rarr;</div>
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-t1">2</div>
+        <div class="pipeline-step-label">Collect Evidence</div>
+        <span class="pipeline-step-tier tier-badge-t1">T1 Gatherer</span>
+      </div>
+      <div class="pipeline-arrow">&rarr;</div>
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-t2">3</div>
+        <div class="pipeline-step-label">Analyze &amp; Score</div>
+        <span class="pipeline-step-tier tier-badge-t2">T2 Thinker</span>
+      </div>
+      <div class="pipeline-arrow">&rarr;</div>
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-t1">4</div>
+        <div class="pipeline-step-label">Map Code</div>
+        <span class="pipeline-step-tier tier-badge-t1">T1 Gatherer</span>
+      </div>
+      <div class="pipeline-arrow">&rarr;</div>
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-t2">5</div>
+        <div class="pipeline-step-label">Implement</div>
+        <span class="pipeline-step-tier tier-badge-t2">T2 Thinker</span>
+      </div>
+      <div class="pipeline-arrow">&rarr;</div>
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-human">&#10003;</div>
+        <div class="pipeline-step-label">Human Review</div>
+        <span class="pipeline-step-tier" style="background:rgba(52,211,153,0.1); color:var(--green); border:1px solid rgba(52,211,153,0.2);">Approval</span>
+      </div>
+      <div class="pipeline-arrow">&rarr;</div>
+      <div class="pipeline-step">
+        <div class="pipeline-dot tier-t3">6</div>
+        <div class="pipeline-step-label">Notify User</div>
+        <span class="pipeline-step-tier tier-badge-t3">T3 Communicator</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE TIERS -->
+<section>
+  <div class="container">
+    <span class="section-label">Agent Architecture</span>
+    <h2 class="section-title">Three-Tier Agent Model</h2>
+    <p class="section-subtitle">Different cognitive jobs need different models. Splitting saves cost, improves quality, and makes each step independently testable.</p>
+    <div class="tiers-grid">
+      <div class="tier-card" style="background: var(--t1-bg); border-color: rgba(34,211,238,0.2);">
+        <h3 style="color: var(--t1);">Tier 1: Gatherers</h3>
+        <p class="tier-desc">Collect, extract, classify, structure. Never make strategic decisions.</p>
+        <ul>
+          <li>Support Classifier <span class="tier-cost">~$0.02</span></li>
+          <li>Bug Evidence Collector <span class="tier-cost">~$0.03</span></li>
+          <li>Feature Context Collector <span class="tier-cost">~$0.03</span></li>
+          <li>Code Context Mapper <span class="tier-cost">~$0.04</span></li>
+          <li>Deploy Status Collector <span class="tier-cost">~$0.01</span></li>
+        </ul>
+        <div class="tier-models">Haiku &middot; GPT-4o-mini &middot; Gemini Flash</div>
+      </div>
+      <div class="tier-card" style="background: var(--t2-bg); border-color: rgba(245,158,11,0.2);">
+        <h3 style="color: var(--t2);">Tier 2: Thinkers</h3>
+        <p class="tier-desc">Analyze, reason, plan, score, implement. The expensive brain.</p>
+        <ul>
+          <li>Support Responder (RAG) <span class="tier-cost">~$0.15</span></li>
+          <li>Bug Analyst <span class="tier-cost">~$0.30</span></li>
+          <li>Feature Analyst <span class="tier-cost">~$0.30</span></li>
+          <li>Coding Agent <span class="tier-cost">~$0.50-1.00</span></li>
+        </ul>
+        <div class="tier-models">Sonnet &middot; Opus &middot; GPT-4o &middot; Gemini Pro</div>
+      </div>
+      <div class="tier-card" style="background: var(--t3-bg); border-color: rgba(167,139,250,0.2);">
+        <h3 style="color: var(--t3);">Tier 3: Communicators</h3>
+        <p class="tier-desc">Translate outcomes into empathetic, clear human language.</p>
+        <ul>
+          <li>Resolution Notifier <span class="tier-cost">~$0.03</span></li>
+          <li>Board Summarizer <span class="tier-cost">~$0.01</span></li>
+          <li>Release Notes Generator <span class="tier-cost">~$0.05</span></li>
+        </ul>
+        <div class="tier-models">Sonnet &middot; GPT-4o-mini</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DUAL LAYER TICKETS -->
+<section>
+  <div class="container">
+    <span class="section-label">Contract Architecture</span>
+    <h2 class="section-title">Dual-Layer Ticket Design</h2>
+    <p class="section-subtitle">Every ticket has a thin Human Layer for board oversight and a deep Agent Layer engineered as a prompt for the next agent in the pipeline.</p>
+    <div class="dual-layer">
+      <div class="layer-card" style="background: var(--surface); border-color: rgba(52,211,153,0.3);">
+        <h3 style="color: var(--green);">Human Layer</h3>
+        <p class="layer-desc">What the founder sees on the board card. Glanceable, actionable.</p>
+        <div class="layer-fields">
+          <div class="layer-field"><code>title</code> <span>"Login fails on Safari after password reset"</span></div>
+          <div class="layer-field"><code>type</code> <span>Bug</span></div>
+          <div class="layer-field"><code>priority</code> <span>P1</span></div>
+          <div class="layer-field"><code>roiScore</code> <span>78 / 100</span></div>
+          <div class="layer-field"><code>pipelineStage</code> <span>Ready for Implementation</span></div>
+          <div class="layer-field"><code>waitingOn</code> <span>agent</span></div>
+          <div class="layer-field"><code>humanActionRequired</code> <span>null (agents handle it)</span></div>
+        </div>
+      </div>
+      <div class="layer-card" style="background: var(--surface); border-color: rgba(99,102,241,0.3);">
+        <h3 style="color: var(--accent-light);">Agent Layer</h3>
+        <p class="layer-desc">The full prompt-engineered context bundle consumed by agents via MCP.</p>
+        <div class="layer-fields">
+          <div class="layer-field"><code>context</code> <span>User input, conversation, env, error logs, similar tickets, code context</span></div>
+          <div class="layer-field"><code>analysis</code> <span>Root cause, fix tiers (hotfix/proper/refactor), ROI breakdown</span></div>
+          <div class="layer-field"><code>guidance</code> <span>Role, objective, steps, success criteria, constraints for next agent</span></div>
+          <div class="layer-field"><code>handoffNotes[]</code> <span>Chain of reasoning from every agent that touched this ticket</span></div>
+          <div class="layer-field"><code>execution</code> <span>Branch, PR, test results</span></div>
+          <div class="layer-field"><code>delivery</code> <span>Deploy status, notification status</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 3rem; margin-bottom: 0.5rem; font-size: 1.1rem;">Handoff Chain Example: Safari Login Bug</h3>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Each agent reads the accumulated context, adds its own work, and rewrites the guidance for the next agent.</p>
+    <div class="handoff">
+      <div class="handoff-step">
+        <div class="handoff-dot tier-t1">T1</div>
+        <div class="handoff-content">
+          <h4>Support Classifier</h4>
+          <p>Classifies user conversation as a bug. Collects browser, OS, screenshot. Structures into IntakeContract.</p>
+          <div class="handoff-writes"><span class="handoff-write">context.environment</span><span class="handoff-write">context.conversationHistory</span><span class="handoff-write">context.attachments</span></div>
+        </div>
+      </div>
+      <div class="handoff-step">
+        <div class="handoff-dot tier-t1">T1</div>
+        <div class="handoff-content">
+          <h4>Bug Evidence Collector</h4>
+          <p>Pulls error logs via K8s MCP. Finds 47 occurrences in 24h affecting ~34 users. Discovers 2 similar past tickets.</p>
+          <div class="handoff-writes"><span class="handoff-write">context.errorData</span><span class="handoff-write">context.relatedTickets</span></div>
+        </div>
+      </div>
+      <div class="handoff-step">
+        <div class="handoff-dot tier-t2">T2</div>
+        <div class="handoff-content">
+          <h4>Bug Analyst</h4>
+          <p>Identifies root cause: SameSite=Strict cookie dropped by Safari 18 after redirect. Creates 3 fix tiers. Scores ROI at 78. Recommends hotfix.</p>
+          <div class="handoff-writes"><span class="handoff-write">analysis.rootCause</span><span class="handoff-write">analysis.fixPlan</span><span class="handoff-write">analysis.roiBreakdown</span><span class="handoff-write">handoffNotes</span></div>
+        </div>
+      </div>
+      <div class="handoff-step">
+        <div class="handoff-dot tier-t1">T1</div>
+        <div class="handoff-content">
+          <h4>Code Context Mapper</h4>
+          <p>Identifies 3 files where auth cookie is set. Maps test coverage. Extracts relevant code snippets.</p>
+          <div class="handoff-writes"><span class="handoff-write">context.codebaseContext</span></div>
+        </div>
+      </div>
+      <div class="handoff-step">
+        <div class="handoff-dot tier-t2">T2</div>
+        <div class="handoff-content">
+          <h4>Coding Agent</h4>
+          <p>Implements hotfix: changes SameSite=Lax in all 3 locations. Adds CSRF token. Writes test. Creates PR.</p>
+          <div class="handoff-writes"><span class="handoff-write">execution.branch</span><span class="handoff-write">execution.pullRequestUrl</span><span class="handoff-write">execution.testResults</span></div>
+        </div>
+      </div>
+      <div class="handoff-step">
+        <div class="handoff-dot tier-human" style="font-size: 1rem;">&#10003;</div>
+        <div class="handoff-content">
+          <h4>Human Approval</h4>
+          <p>Founder reviews the PR diff and approves. Deployment triggers automatically.</p>
+        </div>
+      </div>
+      <div class="handoff-step">
+        <div class="handoff-dot tier-t3">T3</div>
+        <div class="handoff-content">
+          <h4>Resolution Notifier</h4>
+          <p>Reads the full chain. Sends email: "Your Safari login issue has been fixed. The problem was a cookie setting that Safari 18 handles differently. The fix is live now."</p>
+          <div class="handoff-writes"><span class="handoff-write">delivery.notification</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPONENTS -->
+<section>
+  <div class="container">
+    <span class="section-label">Component Catalog</span>
+    <h2 class="section-title">11 Independent Components</h2>
+    <p class="section-subtitle">Each component is independently deployable and swappable. They communicate only through ticket contracts on the Board API.</p>
+    <div class="components-grid">
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">A</div>
+          <h3>Ticket Contracts &amp; Guidance Templates</h3>
+        </div>
+        <p>Zod schemas for all ticket structures (HumanLayer, AgentLayer, all sub-contracts) plus ~12 prompt-engineered guidance templates &mdash; one per tier transition. The API specification of the entire framework.</p>
+        <div class="comp-tags"><span class="comp-tag build">Build New</span><span class="comp-tag">Phase 1</span><span class="comp-tag">Foundation</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">B</div>
+          <h3>ROI Scoring Engine</h3>
+        </div>
+        <p>RICE scoring for features, Bug ROI scoring for bugs. Normalized 0-100 with transparent breakdown showing every factor. "Always hotfix unless the ROI math proves otherwise."</p>
+        <div class="comp-tags"><span class="comp-tag build">Build New</span><span class="comp-tag">Phase 1</span><span class="comp-tag">Shared Library</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">C</div>
+          <h3>Kanban Board</h3>
+        </div>
+        <p>Central protocol layer: REST API + MCP server + React kanban UI. Stores dual-layer tickets. Agents access via MCP; humans see the board. Drag-and-drop, ROI badges, pipeline stages, approval flags.</p>
+        <div class="comp-tags"><span class="comp-tag build">Build New</span><span class="comp-tag">Phase 1</span><span class="comp-tag">API + MCP + UI</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">D</div>
+          <h3>Agent Runner &amp; Pipeline</h3>
+        </div>
+        <p>Coordinates agent execution using AIDEN's Orchestrator + ContextAssembler + ExecutionEngine. Manages ticket flow through per-type pipeline DAGs. Handles tier routing, timeouts, cost tracking.</p>
+        <div class="comp-tags"><span class="comp-tag extend">Extend AIDEN</span><span class="comp-tag">Phase 2</span><span class="comp-tag">Orchestration</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">E</div>
+          <h3>Support Widget</h3>
+        </div>
+        <p>Embeddable chat widget for end-user websites. RAG Q&amp;A over product docs, auto-classification (bug/feature/question), context collection (screenshots, environment), ticket creation on the board.</p>
+        <div class="comp-tags"><span class="comp-tag extend">Extend AIDEN</span><span class="comp-tag">Phase 2</span><span class="comp-tag">T1 + T2 Agents</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">F</div>
+          <h3>Bug Agent</h3>
+        </div>
+        <p>T1 Evidence Collector pulls logs, finds similar tickets, counts affected users. T2 Bug Analyst determines root cause, generates 3 fix tiers (hotfix/proper/refactor), scores Bug ROI.</p>
+        <div class="comp-tags"><span class="comp-tag build">Build New</span><span class="comp-tag">Phase 2</span><span class="comp-tag">T1 + T2 Agents</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">G</div>
+          <h3>Feature Agent</h3>
+        </div>
+        <p>T1 Context Collector gathers similar features, request frequency, competitive references. T2 Feature Analyst produces user stories, acceptance criteria, RICE score, technical spec.</p>
+        <div class="comp-tags"><span class="comp-tag build">Build New</span><span class="comp-tag">Phase 2</span><span class="comp-tag">T1 + T2 Agents</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">H</div>
+          <h3>Coding Bridge</h3>
+        </div>
+        <p>Integration layer for any coding agent (Claude Code, Cursor, etc.). T1 Code Context Mapper enriches tickets with codebase data. "Next task" API + result reporting. We build a bridge, not an agent.</p>
+        <div class="comp-tags"><span class="comp-tag integrate">Integrate</span><span class="comp-tag">Phase 3</span><span class="comp-tag">T1 Agent + API</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">I</div>
+          <h3>Communication Agent</h3>
+        </div>
+        <p>T3 agents: Resolution Notifier (personalized emails), Board Summarizer (human-readable card summaries), Release Notes Generator (batched changelogs). Closes the loop with users.</p>
+        <div class="comp-tags"><span class="comp-tag extend">Extend AIDEN</span><span class="comp-tag">Phase 3</span><span class="comp-tag">T3 Agents</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">J</div>
+          <h3>DevOps Dashboard</h3>
+        </div>
+        <p>Lightweight React dashboard: deploy button, log viewer (Loki), metrics (Prometheus), cost tracking (LLM + infra), environment switcher. Business language only &mdash; no DevOps jargon.</p>
+        <div class="comp-tags"><span class="comp-tag build">Build New</span><span class="comp-tag">Phase 3</span><span class="comp-tag">UI Only</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-header">
+          <div class="comp-letter">K</div>
+          <h3>MCP Server Extensions</h3>
+        </div>
+        <p>New MCP server types: Kanban (board access for agents), Loki (log queries), Code Analysis (file tree, deps, tests). Follows the existing AIDEN MCP pattern. Kanban MCP is the most critical.</p>
+        <div class="comp-tags"><span class="comp-tag extend">Extend AIDEN</span><span class="comp-tag">Phase 1+3</span><span class="comp-tag">Agent Tools</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AIDEN REUSE -->
+<section>
+  <div class="container">
+    <span class="section-label">Standing on Shoulders</span>
+    <h2 class="section-title">Built on AIDEN</h2>
+    <p class="section-subtitle">FORGE inherits ~80% of its infrastructure from the AIDEN platform. Only genuinely new functionality is built fresh.</p>
+    <div class="reuse-bar">
+      <div class="reused" style="width: 75%;">75% Reused from AIDEN (~40 weeks saved)</div>
+      <div class="new" style="width: 25%;">25% New</div>
+    </div>
+    <div class="reuse-grid">
+      <div class="reuse-item"><div class="reuse-dot core"></div>LLM Multi-Provider Routing</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>RAG Pipeline (Vector + BM25)</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>BullMQ Queue System</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>Billing &amp; Token Tracking</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>Auth + Multi-Tenancy</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>Audit Logging</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>Context Assembler</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>Orchestrator (Tool Loop)</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>DAG Execution Engine</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>Triage Service (Tier Routing)</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>Sales Chat Widget &rarr; Support Widget</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>MCP Server Pattern</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>MongoDB + Mongoose Patterns</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>React + Tailwind + Zustand</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>Rancher Fleet GitOps</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>Prometheus + Loki + New Relic</div>
+      <div class="reuse-item"><div class="reuse-dot adapt"></div>Brevo + Resend Email</div>
+      <div class="reuse-item"><div class="reuse-dot core"></div>GitHub Actions CI/CD</div>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem;">
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--green); margin-right:4px; vertical-align:middle;"></span> Direct reuse &nbsp;
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--t2); margin-right:4px; vertical-align:middle;"></span> Adapt with minor extension
+    </p>
+  </div>
+</section>
+
+<!-- BUILD PHASES -->
+<section>
+  <div class="container">
+    <span class="section-label">Roadmap</span>
+    <h2 class="section-title">Build Phases</h2>
+    <p class="section-subtitle">Incremental delivery. Each phase produces a usable, testable increment of the full pipeline.</p>
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-dot">0</div>
+        <h3>Repository Setup</h3>
+        <div class="phase-time">~1 day</div>
+        <p>Create <code>rootsandrivets</code> GitHub org. Clean-copy all 5 AIDEN repos. Update names, configs, CI. Verify independent build.</p>
+        <div class="phase-components">
+          <span class="phase-comp-tag">forge_api</span>
+          <span class="phase-comp-tag">forge_frontend</span>
+          <span class="phase-comp-tag">forge_external_api</span>
+          <span class="phase-comp-tag">forge_gitops</span>
+          <span class="phase-comp-tag">forge_mcp_servers</span>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">1</div>
+        <h3>The Protocol + Board</h3>
+        <div class="phase-time">3-4 weeks</div>
+        <p>Ticket contract schemas, ROI engine, board API + MCP server + kanban UI. After this: tickets exist, agents can access them, humans can manage them.</p>
+        <div class="phase-milestone">Milestone: Create a ticket via MCP, view it on the board, move it, see ROI badge.</div>
+        <div class="phase-components">
+          <span class="phase-comp-tag">A: Contracts</span>
+          <span class="phase-comp-tag">B: ROI Engine</span>
+          <span class="phase-comp-tag">C: Board</span>
+          <span class="phase-comp-tag">K: Kanban MCP</span>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">2</div>
+        <h3>Intake + Analysis</h3>
+        <div class="phase-time">4-5 weeks</div>
+        <p>Agent runner, support widget, bug agent, feature agent. After this: users report issues, agents auto-analyze and score them by ROI.</p>
+        <div class="phase-milestone">Milestone: User reports bug via widget &rarr; agents analyze &rarr; scored ticket on board with fix plan.</div>
+        <div class="phase-components">
+          <span class="phase-comp-tag">D: Agent Runner</span>
+          <span class="phase-comp-tag">E: Support Widget</span>
+          <span class="phase-comp-tag">F: Bug Agent</span>
+          <span class="phase-comp-tag">G: Feature Agent</span>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">3</div>
+        <h3>Execution + Delivery</h3>
+        <div class="phase-time">4-5 weeks</div>
+        <p>Coding bridge, communication agents, DevOps dashboard, remaining MCP servers. After this: full pipeline end-to-end.</p>
+        <div class="phase-milestone">Milestone: Bug flows from report &rarr; analysis &rarr; implementation &rarr; deploy &rarr; user notification.</div>
+        <div class="phase-components">
+          <span class="phase-comp-tag">H: Coding Bridge</span>
+          <span class="phase-comp-tag">I: Comm Agent</span>
+          <span class="phase-comp-tag">J: DevOps Dashboard</span>
+          <span class="phase-comp-tag">K: Loki + Code MCP</span>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">4</div>
+        <h3>Polish + Dogfood</h3>
+        <div class="phase-time">2-3 weeks</div>
+        <p>Pipeline Skill definitions, e2e testing, integration guides ("Bring Your Own X"), deploy for AIDEN as first customer. Iterate guidance templates with real data.</p>
+        <div class="phase-milestone">Milestone: AIDEN bugs routed through FORGE. Real user feedback driving template improvements.</div>
+        <div class="phase-components">
+          <span class="phase-comp-tag">Integration Guides</span>
+          <span class="phase-comp-tag">E2E Testing</span>
+          <span class="phase-comp-tag">AIDEN Dogfood</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY RISKS -->
+<section>
+  <div class="container">
+    <span class="section-label">Eyes Open</span>
+    <h2 class="section-title">Key Risks &amp; Mitigations</h2>
+    <p class="section-subtitle">The things that could go wrong and how we plan to prevent them.</p>
+    <div class="risks-grid">
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num arch">1</div><h4>Guidance Template Quality</h4></div>
+        <p>Templates are prompt engineering at system level. Bad templates = bad agent output regardless of model. <strong>Mitigation:</strong> Treat as code. Version, test empirically, iterate based on real output.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num arch">2</div><h4>T1 Garbage = T2 Garbage</h4></div>
+        <p>If evidence collectors extract wrong data, analysts reason about nonsense with high confidence. <strong>Mitigation:</strong> Strong T1 validation. Cheap to rerun. "Re-gather" button for humans.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num ops">3</div><h4>Cost Explosion</h4></div>
+        <p>Every agent call = LLM costs. Full bug pipeline: ~$0.50-$2.00. At scale, costs compound. <strong>Mitigation:</strong> Per-agent daily budgets. Visible per-ticket cost. Cost dashboard.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num ops">4</div><h4>Human-in-the-Loop Fatigue</h4></div>
+        <p>Too many approval requests drown the founder. <strong>Mitigation:</strong> Agents proceed autonomously by default. Only flag when confidence &lt; 0.5 or action is high-risk.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num arch">5</div><h4>Pipeline Stalls</h4></div>
+        <p>A failed agent step = tickets pile up. <strong>Mitigation:</strong> Per-stage timeouts. Auto-flag "action required." Per-list age tracking surfaces bottlenecks visually.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num biz">6</div><h4>Scope: 11 Components</h4></div>
+        <p>Risk of building everything at 50% quality. <strong>Mitigation:</strong> Phase 1+2 delivers a complete intake-to-analysis loop. Ship and validate before Phase 3.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num tech">7</div><h4>Codebase Divergence</h4></div>
+        <p>FORGE and AIDEN will drift over time. <strong>Mitigation:</strong> FORGE code in <code>forge-*</code> namespaces. Upstream remote for sync. Monthly merge cadence.</p>
+      </div>
+      <div class="risk-card">
+        <div class="risk-header"><div class="risk-num biz">8</div><h4>Target User Simplicity</h4></div>
+        <p>Founders understand economics, not kubectl. <strong>Mitigation:</strong> Business language everywhere. "Deploy latest version" not "Rollout restart deployment."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REPOS -->
+<section>
+  <div class="container">
+    <span class="section-label">Infrastructure</span>
+    <h2 class="section-title">Repository Structure</h2>
+    <p class="section-subtitle">Clean copies from AIDEN into the rootsandrivets GitHub organization. Independent access control, upstream remote for selective merging.</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.25rem;">forge_api</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">Backend API. FORGE services, modules, agents, controllers.</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.25rem;">forge_frontend</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">React UI. Board, dashboard, widget, coding tasks pages.</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.25rem;">forge_external_api</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">Public API. Agent board access, support widget backend.</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.25rem;">forge_gitops</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">Rancher Fleet. Kubernetes deployment configs.</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.25rem;">
+        <div style="font-weight:700; margin-bottom:0.25rem;">forge_mcp_servers</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">MCP servers. Kanban, Loki, Code Analysis + inherited K8s, GitHub, NewRelic, MongoDB.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="container">
+    <p><strong>FORGE</strong> &mdash; Framework for Orchestrated, ROI-Guided Engineering</p>
+    <p style="margin-top:0.35rem;">Built on the AIDEN platform by rootsandrivets &middot; Architecture v1.0 &middot; April 2026</p>
+  </div>
+</div>
+
+</body>
+</html>
